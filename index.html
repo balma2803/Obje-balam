@@ -44,12 +44,12 @@
     <div class="question-container">
       <label for="q4">4. NOMBRE DEL CLIENTE</label>
       <textarea id="q4" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q4', true)">Dictar</button>
+      <button type="button" class="dictate-button" onclick="dictar(this, 'q4')">Dictar</button>
     </div>
     <div class="question-container">
       <label for="q5">5. QUIÉN TE ATENDIÓ EN OCI</label>
       <textarea id="q5" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q5', true)">Dictar</button>
+      <button type="button" class="dictate-button" onclick="dictar(this, 'q5')">Dictar</button>
     </div>
     <div class="question-container">
       <label for="q6">6. FOLIO DE OCI</label>
@@ -59,7 +59,7 @@
     <div class="question-container">
       <label for="q7">7. EL MOTIVO DE OBJECIÓN</label>
       <textarea id="q7" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q7', true)">Dictar</button>
+      <button type="button" class="dictate-button" onclick="dictar(this, 'q7')">Dictar</button>
     </div>
     <div class="question-container">
       <label for="q8">8. FECHA</label>
@@ -99,18 +99,21 @@
     document.getElementById('quizForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Función para eliminar espacios de cualquier valor obtenido
-      const clean = (id) => document.getElementById(id).value.replace(/\s/g, '');
+      // Obtenemos los valores
+      const q1 = document.getElementById('q1').value;
+      const q2 = document.getElementById('q2').value;
+      // Aquí unimos el distrito y el detalle sin espacios
+      const dist = document.getElementById('q3').value;
+      const distDet = document.getElementById('q3_detalle').value.replace(/\s/g, '');
+      const distFinal = dist + distDet;
       
-      const mensaje = `*OS:*${clean('q1')}\n` +
-                      `*TEL:*${clean('q2')}\n` +
-                      `*DIST:*${document.getElementById('q3').value}${clean('q3_detalle')}\n` +
-                      `*CLIENTE:*${clean('q4')}\n` +
-                      `*ATENDIÓ:*${clean('q5')}\n` +
-                      `*FOLIO:*${clean('q6')}\n` +
-                      `*MOTIVO:*${clean('q7')}\n` +
-                      `*FECHA:*${clean('q8')}\n` +
-                      `*LIBRERÍA:*MÉRIDA\n*TÉCNICO:*CARLOSMORALES`;
+      const q4 = document.getElementById('q4').value;
+      const q5 = document.getElementById('q5').value;
+      const q6 = document.getElementById('q6').value;
+      const q7 = document.getElementById('q7').value;
+      const q8 = document.getElementById('q8').value;
+      
+      const mensaje = `*OS:* ${q1}\n*TEL:* ${q2}\n*DIST:* ${distFinal}\n*CLIENTE:* ${q4}\n*ATENDIÓ:* ${q5}\n*FOLIO:* ${q6}\n*MOTIVO:* ${q7}\n*FECHA:* ${q8}\n*LIBRERÍA:* MÉRIDA\n*TÉCNICO:* CARLOS MORALES`;
 
       window.open(`https://wa.me/5219981962125?text=${encodeURIComponent(mensaje)}`, '_blank');
     });
