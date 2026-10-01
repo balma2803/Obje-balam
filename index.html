@@ -1,122 +1,797 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Objeción Balam</title>
+
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #4e5073; color: #000; }
-    .question-container { background-color: #c5c7e3; padding: 20px; margin-bottom: 15px; border-radius: 8px; }
-    textarea, select { width: 100%; margin-top: 10px; padding: 10px; box-sizing: border-box; text-transform: uppercase; }
-    textarea { height: 40px; }
-    button { background-color: #3358FF; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 10px; width: 100%; }
-    .dictate-button { background-color: #FF8C00; }
-    footer { text-align: center; font-size: 12px; color: #ccc; margin-top: 40px; }
-  </style>
-</head>
-<body>
-  <h1>OBJECIÓN DE OS</h1>
-  <form id="quizForm">
-    <div class="question-container">
-      <label for="q1">1. NÚMERO DE OS</label>
-      <textarea id="q1" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q1', true)">Dictar</button>
-    </div>
-    <div class="question-container">
-      <label for="q2">2. NÚMERO TELEFÓNICO</label>
-      <textarea id="q2" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q2', true)">Dictar</button>
-    </div>
-    
-    <div class="question-container">
-      <label for="q3">3. DISTRITO</label>
-      <select id="q3">
-        <option value="KUK">KUK</option>
-        <option value="NUL">NUL</option>
-        <option value="DZU">DZU</option>
-        <option value="PUS">PUS</option>
-        <option value="KIN">KIN</option>
-      </select>
-      <textarea id="q3_detalle" placeholder="Detalles adicionales..."></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q3_detalle', true)">Dictar Detalles</button>
-    </div>
-
-    <div class="question-container">
-      <label for="q4">4. NOMBRE DEL CLIENTE</label>
-      <textarea id="q4" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q4')">Dictar</button>
-    </div>
-    <div class="question-container">
-      <label for="q5">5. QUIÉN TE ATENDIÓ EN OCI</label>
-      <textarea id="q5" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q5')">Dictar</button>
-    </div>
-    <div class="question-container">
-      <label for="q6">6. FOLIO DE OCI</label>
-      <textarea id="q6" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q6', true)">Dictar</button>
-    </div>
-    <div class="question-container">
-      <label for="q7">7. EL MOTIVO DE OBJECIÓN</label>
-      <textarea id="q7" required></textarea>
-      <button type="button" class="dictate-button" onclick="dictar(this, 'q7')">Dictar</button>
-    </div>
-    <div class="question-container">
-      <label for="q8">8. FECHA</label>
-      <textarea id="q8" required></textarea>
-    </div>
-    <button type="submit">Balam, guarda tus respuestas</button>
-  </form>
-
-  <footer>Desarrollado por Carlos Morales</footer>
-
-  <script>
-    window.onload = () => {
-      const hoy = new Date().toLocaleDateString('es-MX');
-      if(!document.getElementById('q8').value) document.getElementById('q8').value = hoy;
-      
-      ['q1','q2','q3_detalle','q4','q5','q6','q7'].forEach(id => {
-        const val = localStorage.getItem(id);
-        if(val) document.getElementById(id).value = val;
-      });
-    };
-
-    function dictar(btn, idCampo, quitarEspacios = false) {
-      if (!('webkitSpeechRecognition' in window)) return alert('Tu navegador no soporta voz.');
-      const rec = new webkitSpeechRecognition();
-      rec.lang = 'es-ES';
-      rec.onstart = () => { btn.style.backgroundColor = '#ff0000'; btn.textContent = 'Escuchando...'; };
-      rec.onend = () => { btn.style.backgroundColor = '#FF8C00'; btn.textContent = 'Dictar'; };
-      rec.onresult = (e) => {
-        let texto = e.results[0][0].transcript.toUpperCase();
-        if (quitarEspacios) texto = texto.replace(/\s/g, '');
-        document.getElementById(idCampo).value = texto;
-        localStorage.setItem(idCampo, texto);
-      };
-      rec.start();
+    * {
+      box-sizing: border-box;
     }
 
-    document.getElementById('quizForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Obtenemos los valores
-      const q1 = document.getElementById('q1').value;
-      const q2 = document.getElementById('q2').value;
-      // Aquí unimos el distrito y el detalle sin espacios
-      const dist = document.getElementById('q3').value;
-      const distDet = document.getElementById('q3_detalle').value.replace(/\s/g, '');
-      const distFinal = dist + distDet;
-      
-      const q4 = document.getElementById('q4').value;
-      const q5 = document.getElementById('q5').value;
-      const q6 = document.getElementById('q6').value;
-      const q7 = document.getElementById('q7').value;
-      const q8 = document.getElementById('q8').value;
-      
-      const mensaje = `*OS:* ${q1}\n*TEL:* ${q2}\n*DIST:* ${distFinal}\n*CLIENTE:* ${q4}\n*ATENDIÓ:* ${q5}\n*FOLIO:* ${q6}\n*MOTIVO:* ${q7}\n*FECHA:* ${q8}\n*LIBRERÍA:* MÉRIDA\n*TÉCNICO:* CARLOS MORALES`;
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #eef1f6;
+      color: #20242b;
+    }
 
-      window.open(`https://wa.me/5219981962125?text=${encodeURIComponent(mensaje)}`, '_blank');
-    });
+    /* ==========================
+       ENCABEZADO
+    ========================== */
+
+    .header {
+      background: linear-gradient(135deg, #222b45, #39466b);
+      color: white;
+      padding: 25px 20px 24px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+    }
+
+    .logo {
+      width: 65px;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .header p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* ==========================
+       CONTENEDOR
+    ========================== */
+
+    .container {
+      max-width: 720px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    /* ==========================
+       TARJETAS
+    ========================== */
+
+    .question-container {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+      border: 1px solid #e1e5ec;
+    }
+
+    .question-number {
+      color: #6574a5;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    label {
+      display: block;
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #242936;
+    }
+
+    /* ==========================
+       CAMPOS
+    ========================== */
+
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #cfd5df;
+      background: #f8f9fb;
+      border-radius: 9px;
+      padding: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      color: #20242b;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    textarea {
+      min-height: 44px;
+      height: 44px;
+      resize: vertical;
+      text-transform: uppercase;
+    }
+
+    textarea:focus,
+    select:focus {
+      border-color: #5268b8;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(82,104,184,0.12);
+    }
+
+    select {
+      height: 44px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    /* ==========================
+       BOTÓN DICTAR
+    ========================== */
+
+    .dictate-button {
+      width: 100%;
+      margin-top: 9px;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      background: #e9edf7;
+      color: #34436e;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .dictate-button:hover {
+      background: #dce3f5;
+    }
+
+    .dictate-button:active {
+      transform: scale(0.98);
+    }
+
+    /* ==========================
+       BOTÓN PRINCIPAL
+    ========================== */
+
+    .submit-button {
+      width: 100%;
+      border: none;
+      border-radius: 11px;
+      padding: 16px;
+      margin-top: 5px;
+      background: linear-gradient(135deg, #293b8f, #5268c5);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(41,59,143,0.25);
+      transition: 0.2s;
+    }
+
+    .submit-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(41,59,143,0.30);
+    }
+
+    .submit-button:active {
+      transform: scale(0.99);
+    }
+
+    /* ==========================
+       FECHA
+    ========================== */
+
+    #q8 {
+      background: #eef1f6;
+      color: #596171;
+      font-weight: bold;
+    }
+
+    /* ==========================
+       PIE
+    ========================== */
+
+    footer {
+      text-align: center;
+      padding: 25px 10px;
+      font-size: 11px;
+      color: #89909f;
+    }
+
+    /* ==========================
+       MÓVIL
+    ========================== */
+
+    @media (max-width: 600px) {
+
+      .header {
+        padding: 22px 15px;
+      }
+
+      .logo {
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
+      .container {
+        margin-top: 18px;
+        padding: 0 10px;
+      }
+
+      .question-container {
+        padding: 15px;
+        border-radius: 12px;
+      }
+
+      label {
+        font-size: 14px;
+      }
+
+      textarea,
+      select {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================
+       ENCABEZADO
+  ========================== -->
+
+  <header class="header">
+
+    <!--
+      IMPORTANTE:
+      El archivo debe llamarse exactamente "foto.jpg"
+      y estar en la misma carpeta que este HTML.
+    -->
+
+    <img
+      src="foto.jpg"
+      class="logo"
+      alt="Balam"
+    >
+
+    <h1>OBJECIÓN DE OS</h1>
+
+    <p>Registro de objeciones · Balam</p>
+
+  </header>
+
+
+  <!-- ==========================
+       FORMULARIO
+  ========================== -->
+
+  <main class="container">
+
+    <form id="quizForm">
+
+
+      <!-- 1. OS -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 01
+        </div>
+
+        <label for="q1">
+          NÚMERO DE OS
+        </label>
+
+        <textarea
+          id="q1"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q1', true)"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 2. TELÉFONO -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 02
+        </div>
+
+        <label for="q2">
+          NÚMERO TELEFÓNICO
+        </label>
+
+        <textarea
+          id="q2"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q2', true)"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 3. DISTRITO -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 03
+        </div>
+
+        <label for="q3">
+          DISTRITO
+        </label>
+
+        <select id="q3">
+
+          <option value="KUK">
+            KUK
+          </option>
+
+          <option value="NUL">
+            NUL
+          </option>
+
+          <option value="DZU">
+            DZU
+          </option>
+
+          <option value="PUS">
+            PUS
+          </option>
+
+          <option value="KIN">
+            KIN
+          </option>
+
+        </select>
+
+        <textarea
+          id="q3_detalle"
+          placeholder="Detalles adicionales..."
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q3_detalle', true)"
+        >
+          🎤 Dictar detalles
+        </button>
+
+      </div>
+
+
+      <!-- 4. CLIENTE -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 04
+        </div>
+
+        <label for="q4">
+          NOMBRE DEL CLIENTE
+        </label>
+
+        <textarea
+          id="q4"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q4')"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 5. OCI -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 05
+        </div>
+
+        <label for="q5">
+          QUIÉN TE ATENDIÓ EN OCI
+        </label>
+
+        <textarea
+          id="q5"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q5')"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 6. FOLIO -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 06
+        </div>
+
+        <label for="q6">
+          FOLIO DE OCI
+        </label>
+
+        <textarea
+          id="q6"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q6', true)"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 7. MOTIVO -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 07
+        </div>
+
+        <label for="q7">
+          MOTIVO DE OBJECIÓN
+        </label>
+
+        <textarea
+          id="q7"
+          required
+        ></textarea>
+
+        <button
+          type="button"
+          class="dictate-button"
+          onclick="dictar(this, 'q7')"
+        >
+          🎤 Dictar
+        </button>
+
+      </div>
+
+
+      <!-- 8. FECHA -->
+
+      <div class="question-container">
+
+        <div class="question-number">
+          Campo 08
+        </div>
+
+        <label for="q8">
+          FECHA
+        </label>
+
+        <textarea
+          id="q8"
+          required
+        ></textarea>
+
+      </div>
+
+
+      <!-- ENVIAR -->
+
+      <button
+        type="submit"
+        class="submit-button"
+      >
+        📲 Balam, guardar y enviar
+      </button>
+
+    </form>
+
+  </main>
+
+
+  <!-- PIE -->
+
+  <footer>
+    Desarrollado por Carlos Morales
+  </footer>
+
+
+  <script>
+
+    /* =========================================
+       CARGAR DATOS GUARDADOS
+    ========================================= */
+
+    window.onload = () => {
+
+      const hoy =
+        new Date().toLocaleDateString('es-MX');
+
+      if (
+        !document.getElementById('q8').value
+      ) {
+
+        document.getElementById('q8').value = hoy;
+
+      }
+
+
+      [
+        'q1',
+        'q2',
+        'q3_detalle',
+        'q4',
+        'q5',
+        'q6',
+        'q7'
+
+      ].forEach(id => {
+
+        const val =
+          localStorage.getItem(id);
+
+        if (val) {
+
+          document.getElementById(id).value =
+            val;
+
+        }
+
+      });
+
+    };
+
+
+    /* =========================================
+       DICTADO POR VOZ
+    ========================================= */
+
+    function dictar(
+      btn,
+      idCampo,
+      quitarEspacios = false
+    ) {
+
+      if (
+        !('webkitSpeechRecognition' in window)
+      ) {
+
+        alert(
+          'Tu navegador no soporta reconocimiento de voz.'
+        );
+
+        return;
+
+      }
+
+
+      const rec =
+        new webkitSpeechRecognition();
+
+
+      rec.lang = 'es-ES';
+
+      rec.continuous = false;
+
+      rec.interimResults = false;
+
+
+      /* CUANDO COMIENZA A ESCUCHAR */
+
+      rec.onstart = () => {
+
+        btn.style.backgroundColor =
+          '#e53935';
+
+        btn.style.color =
+          'white';
+
+        btn.textContent =
+          '🔴 Escuchando...';
+
+      };
+
+
+      /* CUANDO TERMINA */
+
+      rec.onend = () => {
+
+        btn.style.backgroundColor =
+          '#e9edf7';
+
+        btn.style.color =
+          '#34436e';
+
+        btn.textContent =
+          '🎤 Dictar';
+
+      };
+
+
+      /* SI HAY ERROR */
+
+      rec.onerror = () => {
+
+        btn.style.backgroundColor =
+          '#e9edf7';
+
+        btn.style.color =
+          '#34436e';
+
+        btn.textContent =
+          '🎤 Dictar';
+
+      };
+
+
+      /* RESULTADO DEL DICTADO */
+
+      rec.onresult = (e) => {
+
+        let texto =
+          e.results[0][0].transcript
+            .toUpperCase();
+
+
+        if (quitarEspacios) {
+
+          texto =
+            texto.replace(/\s/g, '');
+
+        }
+
+
+        document.getElementById(
+          idCampo
+        ).value = texto;
+
+
+        localStorage.setItem(
+          idCampo,
+          texto
+        );
+
+      };
+
+
+      rec.start();
+
+    }
+
+
+    /* =========================================
+       ENVIAR A WHATSAPP
+    ========================================= */
+
+    document
+      .getElementById('quizForm')
+      .addEventListener(
+        'submit',
+        function(e) {
+
+          e.preventDefault();
+
+
+          /* DATOS */
+
+          const q1 =
+            document.getElementById('q1').value;
+
+          const q2 =
+            document.getElementById('q2').value;
+
+
+          /* DISTRITO */
+
+          const dist =
+            document.getElementById('q3').value;
+
+
+          const distDet =
+            document
+              .getElementById('q3_detalle')
+              .value
+              .replace(/\s/g, '');
+
+
+          const distFinal =
+            dist + distDet;
+
+
+          /* RESTO */
+
+          const q4 =
+            document.getElementById('q4').value;
+
+          const q5 =
+            document.getElementById('q5').value;
+
+          const q6 =
+            document.getElementById('q6').value;
+
+          const q7 =
+            document.getElementById('q7').value;
+
+          const q8 =
+            document.getElementById('q8').value;
+
+
+          /* MENSAJE */
+
+          const mensaje =
+`*OS:* ${q1}
+*TEL:* ${q2}
+*DIST:* ${distFinal}
+*CLIENTE:* ${q4}
+*ATENDIÓ:* ${q5}
+*FOLIO:* ${q6}
+*MOTIVO:* ${q7}
+*FECHA:* ${q8}
+*LIBRERÍA:* MÉRIDA
+*TÉCNICO:* CARLOS MORALES`;
+
+
+          /* ABRIR WHATSAPP */
+
+          window.open(
+            `https://wa.me/5219981962125?text=${encodeURIComponent(mensaje)}`,
+            '_blank'
+          );
+
+        }
+      );
+
   </script>
+
 </body>
 </html>
+```
